@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCT-100 - API 文档</title>
+    <style>
+        :root {
+            --primary: #1e3a5f;
+            --primary-dark: #0f2744;
+            --secondary: #2563eb;
+            --accent: #3b82f6;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', -apple-system, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1rem 5%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .navbar nav {
+            float: right;
+        }
+
+        .navbar nav a {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .navbar nav a:hover,
+        .navbar nav a.active {
+            color: white;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1e3a5f 0%, #8b5cf6 100%);
+            color: white;
+            padding: 4rem 5%;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 5%;
+        }
+
+        .api-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+            margin-bottom: 2rem;
+        }
+
+        .api-section h2 {
+            color: var(--primary);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .api-section h3 {
+            color: var(--text-dark);
+            margin: 1.5rem 0 1rem;
+        }
+
+        .api-section h4 {
+            color: var(--text-dark);
+            margin: 1rem 0 0.5rem;
+        }
+
+        .api-section p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .api-section ul, .api-section ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .api-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.5rem;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--accent);
+        }
+
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .api-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .api-table th, .api-table td {
+            border: 1px solid var(--border-color);
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        .api-table th {
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .api-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .endpoint-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .endpoint-card .method {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        .method-publish {
+            background: #22c55e;
+            color: white;
+        }
+
+        .method-subscribe {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .endpoint-card .topic {
+            font-family: 'Consolas', monospace;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .payload-example {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+
+        .payload-example code {
+            color: #22d3ee;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+        }
+
+        .parameter-item {
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .parameter-item .param-name {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .parameter-item .param-desc {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            background: var(--primary-dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer p {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .navbar nav {
+                float: none;
+                margin-top: 1rem;
+            }
+            
+            .navbar nav a {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <span class="logo">PCT-100</span>
+        <nav>
+            <a href="index.html">产品说明书</a>
+            <a href="features.html">功能特性</a>
+            <a href="api.html" class="active">API 文档</a>
+        </nav>
+    </nav>
+
+    <div class="hero">
+        <h1>API 文档</h1>
+        <p>MQTT 协议接口说明与串口命令参考</p>
+    </div>
+
+    <div class="container">
+        <div class="api-section">
+            <h2>MQTT 协议接口</h2>
+            
+            <h3>基础配置</h3>
+            <div class="api-table">
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>说明</th>
+                </tr>
+                <tr>
+                    <td>服务器地址</td>
+                    <td>192.168.1.100</td>
+                    <td>MQTT Broker IP 地址</td>
+                </tr>
+                <tr>
+                    <td>端口</td>
+                    <td>1883</td>
+                    <td>MQTT 服务端口</td>
+                </tr>
+                <tr>
+                    <td>客户端 ID</td>
+                    <td>PCT_100_XXX</td>
+                    <td>设备唯一标识符</td>
+                </tr>
+                <tr>
+                    <td>发布主题</td>
+                    <td>chemctrl/{Device_ID}/status</td>
+                    <td>状态上报主题</td>
+                </tr>
+                <tr>
+                    <td>订阅主题</td>
+                    <td>chemctrl/{Device_ID}/command</td>
+                    <td>命令接收主题</td>
+                </tr>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2>状态上报</h2>
+            
+            <div class="endpoint-card">
+                <span class="method method-publish">PUBLISH</span>
+                <span class="topic">chemctrl/{Device_ID}/status</span>
+            </div>
+
+            <h4>上报频率</h4>
+            <ul>
+                <li>定时上报：每 30 秒</li>
+                <li>事件触发：状态变更、阈值穿越时立即上报</li>
+            </ul>
+
+            <h4>Payload 格式</h4>
+            <div class="payload-example">
+<pre><code>{
+  "device_id": "PCT_100_111",
+  "temperature": 25.5,
+  "light": 320,
+  "mode": "auto",
+  "key1_state": true,
+  "relay_state": 2,
+  "temp_threshold": 30.5,
+  "light_threshold": 260,
+  "timestamp": 1672531200
+}</code></pre>
+            </div>
+
+            <h4>字段说明</h4>
+            <div class="api-table">
+                <tr>
+                    <th>字段</th>
+                    <th>类型</th>
+                    <th>说明</th>
+                </tr>
+                <tr>
+                    <td>device_id</td>
+                    <td>string</td>
+                    <td>设备唯一标识</td>
+                </tr>
+                <tr>
+                    <td>temperature</td>
+                    <td>float</td>
+                    <td>当前温度（°C）</td>
+                </tr>
+                <tr>
+                    <td>light</td>
+                    <td>int</td>
+                    <td>光照强度（lm）</td>
+                </tr>
+                <tr>
+                    <td>mode</td>
+                    <td>string</td>
+                    <td>运行模式：auto / manual</td>
+                </tr>
+                <tr>
+                    <td>key1_state</td>
+                    <td>bool</td>
+                    <td>总闸状态：true=合上</td>
+                </tr>
+                <tr>
+                    <td>relay_state</td>
+                    <td>int</td>
+                    <td>继电器状态（0-3）</td>
+                </tr>
+                <tr>
+                    <td>temp_threshold</td>
+                    <td>float</td>
+                    <td>温度阈值（°C）</td>
+                </tr>
+                <tr>
+                    <td>light_threshold</td>
+                    <td>int</td>
+                    <td>光照阈值（lm）</td>
+                </tr>
+                <tr>
+                    <td>timestamp</td>
+                    <td>int</td>
+                    <td>时间戳（秒）</td>
+                </tr>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2>命令控制</h2>
+            
+            <div class="endpoint-card">
+                <span class="method method-subscribe">SUBSCRIBE</span>
+                <span class="topic">chemctrl/{Device_ID}/command</span>
+            </div>
+
+            <h3>支持的命令</h3>
+
+            <h4>1. set_relay - 设置继电器状态</h4>
+            <div class="payload-example">
+<pre><code>{
+  "cmd": "set_relay",
+  "relay": 3,
+  "state": true
+}</code></pre>
+            </div>
+            <div class="api-table">
+                <tr>
+                    <th>参数</th>
+                    <th>类型</th>
+                    <th>说明</th>
+                </tr>
+                <tr>
+                    <td>relay</td>
+                    <td>int</td>
+                    <td>继电器编号：3=灯光，4=风扇</td>
+                </tr>
+                <tr>
+                    <td>state</td>
+                    <td>bool</td>
+                    <td>状态：true=开启，false=关闭</td>
+                </tr>
+            </div>
+
+            <h4>2. set_mode - 设置运行模式</h4>
+            <div class="payload-example">
+<pre><code>{
+  "cmd": "set_mode",
+  "mode": "manual"
+}</code></pre>
+            </div>
+            <div class="api-table">
+                <tr>
+                    <th>参数</th>
+                    <th>类型</th>
+                    <th>说明</th>
+                </tr>
+                <tr>
+                    <td>mode</td>
+                    <td>string</td>
+                    <td>模式：auto / manual</td>
+                </tr>
+            </div>
+
+            <h4>3. set_threshold - 设置阈值</h4>
+            <div class="payload-example">
+<pre><code>{
+  "cmd": "set_threshold",
+  "type": "temp",
+  "value": 32.0
+}</code></pre>
+            </div>
+            <div class="api-table">
+                <tr>
+                    <th>参数</th>
+                    <th>类型</th>
+                    <th>说明</th>
+                </tr>
+                <tr>
+                    <td>type</td>
+                    <td>string</td>
+                    <td>阈值类型：temp / light</td>
+                </tr>
+                <tr>
+                    <td>value</td>
+                    <td>float</td>
+                    <td>阈值数值</td>
+                </tr>
+            </div>
+
+            <h4>4. get_status - 查询状态</h4>
+            <div class="payload-example">
+<pre><code>{
+  "cmd": "get_status"
+}</code></pre>
+            </div>
+            <p>设备收到此命令后，立即上报当前状态到发布主题。</p>
+
+            <h4>5. reboot - 远程重启</h4>
+            <div class="payload-example">
+<pre><code>{
+  "cmd": "reboot"
+}</code></pre>
+            </div>
+            <p>设备延迟 1 秒后执行软复位。</p>
+        </div>
+
+        <div class="api-section">
+            <h2>串口命令</h2>
+
+            <h3>系统命令</h3>
+            <div class="api-table">
+                <tr>
+                    <th>命令</th>
+                    <th>功能</th>
+                    <th>示例</th>
+                </tr>
+                <tr>
+                    <td>wifi</td>
+                    <td>进入 Wi-Fi 扫描配网模式</td>
+                    <td>wifi</td>
+                </tr>
+                <tr>
+                    <td>wifion</td>
+                    <td>连接默认 Wi-Fi</td>
+                    <td>wifion</td>
+                </tr>
+                <tr>
+                    <td>wifioff</td>
+                    <td>断开 Wi-Fi 连接</td>
+                    <td>wifioff</td>
+                </tr>
+                <tr>
+                    <td>clearwifi</td>
+                    <td>清除保存的 Wi-Fi 配置</td>
+                    <td>clearwifi</td>
+                </tr>
+                <tr>
+                    <td>ip</td>
+                    <td>显示网络信息</td>
+                    <td>ip</td>
+                </tr>
+                <tr>
+                    <td>status</td>
+                    <td>显示系统状态</td>
+                    <td>status</td>
+                </tr>
+                <tr>
+                    <td>mode</td>
+                    <td>切换运行模式</td>
+                    <td>mode</td>
+                </tr>
+                <tr>
+                    <td>help</td>
+                    <td>显示帮助信息</td>
+                    <td>help</td>
+                </tr>
+            </div>
+
+            <h3>控制命令（手动模式）</h3>
+            <div class="api-table">
+                <tr>
+                    <th>命令</th>
+                    <th>功能</th>
+                    <th>说明</th>
+                </tr>
+                <tr>
+                    <td>light</td>
+                    <td>切换灯光</td>
+                    <td>手动模式下有效</td>
+                </tr>
+                <tr>
+                    <td>fan</td>
+                    <td>切换风扇</td>
+                    <td>手动模式下有效</td>
+                </tr>
+                <tr>
+                    <td>off</td>
+                    <td>关闭所有设备</td>
+                    <td>立即关闭灯光和风扇</td>
+                </tr>
+            </div>
+
+            <h3>MQTT 配置命令</h3>
+            <div class="api-table">
+                <tr>
+                    <th>命令</th>
+                    <th>功能</th>
+                    <th>示例</th>
+                </tr>
+                <tr>
+                    <td>setmqip</td>
+                    <td>设置 MQTT 服务器 IP</td>
+                    <td>setmqip 192.168.1.100</td>
+                </tr>
+                <tr>
+                    <td>setmqport</td>
+                    <td>设置 MQTT 端口</td>
+                    <td>setmqport 1883</td>
+                </tr>
+                <tr>
+                    <td>setmquser</td>
+                    <td>设置用户名</td>
+                    <td>setmquser admin</td>
+                </tr>
+                <tr>
+                    <td>setmqpass</td>
+                    <td>设置密码</td>
+                    <td>setmqpass password</td>
+                </tr>
+                <tr>
+                    <td>setmqid</td>
+                    <td>设置设备 ID</td>
+                    <td>setmqid PCT_100_001</td>
+                </tr>
+                <tr>
+                    <td>showmqtt</td>
+                    <td>显示 MQTT 配置</td>
+                    <td>showmqtt</td>
+                </tr>
+            </div>
+
+            <h3>RGB LED 命令</h3>
+            <div class="api-table">
+                <tr>
+                    <th>命令</th>
+                    <th>功能</th>
+                </tr>
+                <tr>
+                    <td>r / rgb_red</td>
+                    <td>设置红色</td>
+                </tr>
+                <tr>
+                    <td>g / rgb_green</td>
+                    <td>设置绿色</td>
+                </tr>
+                <tr>
+                    <td>b / rgb_blue</td>
+                    <td>设置蓝色</td>
+                </tr>
+                <tr>
+                    <td>y / rgb_yellow</td>
+                    <td>设置黄色</td>
+                </tr>
+                <tr>
+                    <td>p / rgb_purple</td>
+                    <td>设置紫色</td>
+                </tr>
+                <tr>
+                    <td>c / rgb_cyan</td>
+                    <td>设置青色</td>
+                </tr>
+                <tr>
+                    <td>w / rgb_white</td>
+                    <td>设置白色</td>
+                </tr>
+                <tr>
+                    <td>o / rgb_off</td>
+                    <td>恢复自动状态指示</td>
+                </tr>
+                <tr>
+                    <td>rainbow</td>
+                    <td>彩虹循环动画（5秒）</td>
+                </tr>
+                <tr>
+                    <td>fade</td>
+                    <td>呼吸灯效果（5秒）</td>
+                </tr>
+                <tr>
+                    <td>blink</td>
+                    <td>闪烁效果（5秒）</td>
+                </tr>
+                <tr>
+                    <td>t / rgb_test</td>
+                    <td>颜色测试（每种颜色5秒）</td>
+                </tr>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>PCT-100 化工控制实训装置 | API 文档</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">© 2026 技术架构部</p>
+    </div>
+</body>
+</html>
