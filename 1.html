@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>计数器演示</title>
+<style>
+/* CSS：控制样式与布局 */
+body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #1a1a2e; color: #fff; }
+.card { background: #16213e; padding: 40px; border-radius: 16px; text-align: center; }
+.count { font-size: 64px; color: #e94560; margin: 16px 0; }
+button { background: #e94560; color: #fff; border: none; padding: 12px 32px; font-size: 16px; border-radius: 8px; cursor: pointer; margin: 4px; }
+button:hover { opacity: 0.8; }
+</style>
+</head>
+<body>
+<!-- HTML：定义页面结构 -->
+<div class="card">
+  <h1>计数器</h1>
+  <p>点击按钮改变数值</p>
+  <div class="count" id="count">0</div>
+  <button onclick="add(1)">+1</button>
+  <button onclick="add(-1)">-1</button>
+  <button onclick="reset()" style="background:#444">归零</button>
+</div>
+<!-- JS：实现交互逻辑 -->
+<script>
+var n = 0;
+function add(x) { n += x; document.getElementById('count').textContent = n; }
+function reset() { n = 0; document.getElementById('count').textContent = n; }
+</script>
+</body>
+</html>
